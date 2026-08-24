@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import usa from "../../../usa.png";
 type Message = { from: "bot" | "user"; text: string };
 
 type ChatResponse = {
@@ -10,6 +9,8 @@ type ChatResponse = {
   show_customer_care?: boolean;
   message?: { content?: string };
 };
+
+type OpenChatEvent = CustomEvent<{ message?: string }>;
 
 export function Chatbot() {
   const [open, setOpen] = useState(false);
@@ -29,6 +30,18 @@ export function Chatbot() {
   }, [messages, sending]);
 
   useEffect(() => {
+    function openChat(event: Event) {
+      const message = (event as OpenChatEvent).detail?.message?.trim();
+      if (!message || sending) return;
+      setOpen(true);
+      void sendMessage(message);
+    }
+
+    window.addEventListener("trimmedi:open-chat", openChat);
+    return () => window.removeEventListener("trimmedi:open-chat", openChat);
+  }, [sending]);
+
+  useEffect(() => {
     if (visibleTextRef.current.length >= streamTarget.length) return;
     const timer = window.setInterval(() => {
       visibleTextRef.current = streamTarget.slice(
@@ -45,9 +58,7 @@ export function Chatbot() {
     return () => window.clearInterval(timer);
   }, [streamTarget]);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const text = input.trim();
+  async function sendMessage(text: string) {
     if (!text || sending) return;
     setMessages((current) => [...current, { from: "user", text }]);
     setInput("");
@@ -108,7 +119,10 @@ export function Chatbot() {
       setShowCustomerCare(receivedShowCustomerCare);
     } catch (error) {
       setMessages((current) => [
-        ...current,
+        ...current.filter(
+          (message, index) =>
+            !(index === current.length - 1 && message.from === "bot" && !message.text),
+        ),
         {
           from: "bot",
           text:
@@ -122,6 +136,11 @@ export function Chatbot() {
     }
   }
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void sendMessage(input.trim());
+  }
+
   return (
     <div className={`chatbot ${open ? "chatbot-open" : ""}`}>
       {open && (
@@ -131,9 +150,14 @@ export function Chatbot() {
           aria-label="Trimmedi assistant"
         >
           <div className="chatbot-header">
-            <div>
-              <strong>Start here</strong>
-              <span>Usually replies instantly</span>
+            <div className="chatbot-identity">
+              <span className="chatbot-avatar" aria-hidden="true">
+                <i className="bi bi-stars" />
+              </span>
+              <div>
+                <strong>Trimmedi assistant</strong>
+                <span><b /> {sending ? "Writing a reply..." : "Online now"}</span>
+              </div>
             </div>
             <button
               type="button"
@@ -143,62 +167,67 @@ export function Chatbot() {
               <i className="bi bi-x-lg" />
             </button>
           </div>
-          <div className="chatbot-messages" aria-live="polite">
+          <div className="chatbot-messages" aria-live="polite" aria-relevant="additions text">
             {messages.map((message, index) => (
               <div
-                className={`chat-message chat-message-${message.from}`}
+                className={`chat-message-row chat-message-row-${message.from}`}
                 key={`${message.from}-${index}`}
               >
-                {message.text}
+                {message.from === "bot" && (
+                  <span className="message-avatar" aria-hidden="true">
+                    <i className="bi bi-stars" />
+                  </span>
+                )}
+                <div className={`chat-message chat-message-${message.from}`}>
+                  {message.text || <span className="message-cursor" aria-label="Assistant is composing" />}
+                </div>
               </div>
             ))}
             {sending && (
-              <div className="chat-message chat-message-bot">Thinking...</div>
+              <div className="chat-typing" aria-label="Assistant is typing">
+                <span /><span /><span />
+              </div>
             )}
-         {showCustomerCare && (
-  <div className="human-agent-card">
-    <div className="human-agent-flag" aria-hidden="true">
-    <img src={'../../../usa.png'} alt="US Flag" />
-    </div>
-
-    <a
-      href="tel:+18334263964"
-      className="human-agent-content"
-    aria-label="Talk to a human agent at +1-833-426-3964"
-    >
-      <span className="human-agent-title">
-        Talk to Human Agent
-      </span>
-
-      <span className="human-agent-number">
-        +1-833-426-3964
-      </span>
-    </a>
-  </div>
-)}
+            {showCustomerCare && (
+              <div className="human-agent-card">
+                <div className="human-agent-flag" aria-hidden="true">
+                  <img src="/usa.png" alt="" />
+                </div>
+                <a href="tel:+18334263964" className="human-agent-content" aria-label="Talk to a human agent at +1-833-426-3964">
+                  <span className="human-agent-title">Talk to a human agent</span>
+                  <span className="human-agent-number">+1-833-426-3964</span>
+                </a>
+              </div>
+            )}
+            <div ref={messagesEndRef} aria-hidden="true" />
           </div>
-          <form className="chatbot-form" onSubmit={handleSubmit}>
-            <input
-              aria-label="Message assistant"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask anything..."
-              disabled={sending}
-            />
-            <button type="submit" aria-label="Send message" disabled={sending}>
-              <i className="bi bi-arrow-up" />
-            </button>
+          <form className={`chatbot-form ${sending ? "chatbot-form-sending" : ""}`} onSubmit={handleSubmit}>
+            <div className="chatbot-input-wrap">
+              <input
+                aria-label="Message assistant"
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                placeholder={sending ? "Assistant is replying..." : "Message Trimmedi..."}
+                disabled={sending}
+              />
+              <button type="submit" aria-label="Send message" disabled={sending || !input.trim()}>
+                <i className="bi bi-arrow-up" />
+              </button>
+            </div>
+            <span className="chatbot-form-note">{sending ? "Please wait for the reply" : "Enter to send"}</span>
           </form>
         </div>
       )}
-      <button
-        className="chatbot-launcher"
-        type="button"
-        onClick={() => setOpen((current) => !current)}
-        aria-label={open ? "Close chat" : "Open chat"}
-      >
-        <i className={open ? "bi bi-x-lg" : "bi bi-chat-heart"} />
-      </button>
+      {!open && (
+        <button
+          className="chatbot-launcher"
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Open chat"
+        >
+          <img className="chatbot-launcher-image" src="/assistance.gif" alt="" />
+        </button>
+      )}
     </div>
   );
 }
