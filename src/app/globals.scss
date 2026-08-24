@@ -161,3 +161,74 @@
 .chatbot-launcher:hover {
   background: #fff;
 }
+
+.chatbot-launcher-arrival {
+  animation: chatbot-launcher-pop .75s cubic-bezier(.2, .8, .25, 1.2);
+}
+
+@keyframes chatbot-launcher-pop {
+  0% { opacity: 0; transform: scale(.45); }
+  65% { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.chatbot-greeting {
+  position: absolute;
+  right: 4.4rem;
+  bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .55rem .85rem .55rem .65rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--brand-secondary);
+  box-shadow: 0 8px 24px rgba(15, 35, 75, .18);
+  font-size: .78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  animation: chatbot-greeting-in .65s .35s both;
+}
+
+.chatbot-greeting::after {
+  position: absolute;
+  right: -.35rem;
+  bottom: .75rem;
+  width: .7rem;
+  height: .7rem;
+  background: #fff;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.chatbot-greeting-close {
+  position: absolute;
+  top: -.55rem;
+  right: -.35rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brand-secondary);
+  color: #fff;
+  font-size: .48rem;
+}
+
+.chatbot-greeting-hand {
+  color: #f2bd42;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+@keyframes chatbot-greeting-in {
+  from { opacity: 0; transform: translateX(12px) scale(.9); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@media (max-width: 575.98px) {
+  .chatbot-greeting { right: 4rem; max-width: calc(100vw - 6rem); }
+}

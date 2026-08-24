@@ -14,6 +14,8 @@ type OpenChatEvent = CustomEvent<{ message?: string }>;
 
 export function Chatbot() {
   const [open, setOpen] = useState(false);
+  const [launcherArriving, setLauncherArriving] = useState(true);
+  const [greetingVisible, setGreetingVisible] = useState(true);
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState<string>();
   const [sending, setSending] = useState(false);
@@ -24,6 +26,51 @@ export function Chatbot() {
   const [streamTarget, setStreamTarget] = useState("");
   const [showCustomerCare, setShowCustomerCare] = useState(false);
   const visibleTextRef = useRef("");
+  const arrivalSoundPlayedRef = useRef(false);
+
+  useEffect(() => {
+    const arrivalTimer = window.setTimeout(() => setLauncherArriving(false), 900);
+
+    async function playArrivalSound() {
+      if (arrivalSoundPlayedRef.current) return;
+      const AudioContextClass = window.AudioContext ||
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextClass) return;
+
+      const audioContext = new AudioContextClass();
+      try {
+        await audioContext.resume();
+        const gain = audioContext.createGain();
+        gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.08, audioContext.currentTime + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.42);
+        gain.connect(audioContext.destination);
+
+        [660, 880].forEach((frequency, index) => {
+          const oscillator = audioContext.createOscillator();
+          oscillator.type = "sine";
+          oscillator.frequency.value = frequency;
+          oscillator.connect(gain);
+          oscillator.start(audioContext.currentTime + index * 0.1);
+          oscillator.stop(audioContext.currentTime + 0.3 + index * 0.1);
+        });
+        arrivalSoundPlayedRef.current = true;
+        window.setTimeout(() => void audioContext.close(), 600);
+      } catch {
+        await audioContext.close();
+      }
+    }
+
+    void playArrivalSound();
+    const unlockSound = () => void playArrivalSound();
+    window.addEventListener("pointerdown", unlockSound);
+    window.addEventListener("keydown", unlockSound);
+    return () => {
+      window.clearTimeout(arrivalTimer);
+      window.removeEventListener("pointerdown", unlockSound);
+      window.removeEventListener("keydown", unlockSound);
+    };
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -219,14 +266,30 @@ export function Chatbot() {
         </div>
       )}
       {!open && (
-        <button
-          className="chatbot-launcher"
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label="Open chat"
-        >
-          <img className="chatbot-launcher-image" src="/assistance.gif" alt="" />
-        </button>
+        <>
+          {greetingVisible && (
+            <div className="chatbot-greeting" role="status">
+              <button
+                className="chatbot-greeting-close"
+                type="button"
+                onClick={() => setGreetingVisible(false)}
+                aria-label="Dismiss greeting"
+              >
+                <i className="bi bi-x-lg" />
+              </button>
+              <span className="chatbot-greeting-hand" aria-hidden="true">&#128073;</span>
+              <span>We are here!</span>
+            </div>
+          )}
+          <button
+            className={`chatbot-launcher ${launcherArriving ? "chatbot-launcher-arrival" : ""}`}
+            type="button"
+            onClick={() => { setOpen(true); setGreetingVisible(false); }}
+            aria-label="Open chat"
+          >
+            <img className="chatbot-launcher-image" src="/assistance.gif" alt="" />
+          </button>
+        </>
       )}
     </div>
   );
