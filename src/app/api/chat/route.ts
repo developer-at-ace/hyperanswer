@@ -1,15 +1,26 @@
 import { NextResponse } from "next/server";
 
-const chatbotUrl = process.env.CHATBOT_URL ?? "http://bot.suamglobalventures.com/chat";
+const defaultChatbotUrl = "http://bot.suamglobalventures.com/chat";
+const configuredChatbotUrl = process.env.CHATBOT_URL?.trim() || defaultChatbotUrl;
 
 export async function POST(request: Request) {
   try {
-    const response = await fetch(chatbotUrl, {
+    const body = JSON.stringify(await request.json());
+    const requestOptions: RequestInit = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(await request.json()),
+      body,
       signal: AbortSignal.timeout(125_000),
-    });
+    };
+
+    let response: Response;
+    try {
+      response = await fetch(configuredChatbotUrl, requestOptions);
+    } catch (error) {
+      if (configuredChatbotUrl === defaultChatbotUrl) throw error;
+      console.error("Configured chatbot host failed; using the default host", error);
+      response = await fetch(defaultChatbotUrl, requestOptions);
+    }
 
     return new NextResponse(response.body, {
       status: response.status,
