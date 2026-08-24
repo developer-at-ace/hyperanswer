@@ -4,7 +4,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.scss";
 
 export const metadata: Metadata = {
-  title: "AnswerRightNow | Expert answers, right when it matters",
+  title: "Trimmedi | Expert answers, right when it matters",
   description: "A shared expert Q&A experience for thoughtful, practical guidance.",
 };
 

@@ -128,7 +128,7 @@ export function Chatbot() {
         <div
           className="chatbot-panel"
           role="dialog"
-          aria-label="AnswerRightNow assistant"
+          aria-label="Trimmedi assistant"
         >
           <div className="chatbot-header">
             <div>

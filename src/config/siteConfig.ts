@@ -1,4 +1,4 @@
-export type SiteKey = "answerRightNow" | "trimMedi";
+export type SiteKey = "Trimmedi" | "trimMedi";
 
 export type Category = {
   name: string;
@@ -43,10 +43,10 @@ const medicalCategories: Category[] = [
 ];
 
 export const siteConfigs: Record<SiteKey, SiteConfig> = {
-  answerRightNow: {
-    key: "answerRightNow",
-    siteName: "AnswerRightNow",
-    domain: "answerrightnow.com",
+  Trimmedi: {
+    key: "Trimmedi",
+    siteName: "Trimmedi",
+    domain: "Trimmedi.com",
     eyebrow: "Expert perspective, right when it matters",
     tagline: "Get expert answers when you need them.",
     description: "Ask a real question and find a thoughtful path forward with qualified help.",
@@ -73,5 +73,5 @@ export const siteConfigs: Record<SiteKey, SiteConfig> = {
 
 export function getSiteConfig(hostname = "") {
   const host = hostname.toLowerCase().split(":")[0];
-  return host.includes("trimmedi") ? siteConfigs.trimMedi : siteConfigs.answerRightNow;
+  return host.includes("trimmedi") ? siteConfigs.trimMedi : siteConfigs.Trimmedi;
 }
