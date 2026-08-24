@@ -6,6 +6,9 @@ import "./globals.scss";
 export const metadata: Metadata = {
   title: "Trimmedi | Expert answers, right when it matters",
   description: "A shared expert Q&A experience for thoughtful, practical guidance.",
+  icons: {
+    icon: "/assistance.gif",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
