@@ -135,18 +135,42 @@ export function Chatbot() {
       let receivedSessionId: string | undefined;
       let receivedShowCustomerCare = false;
 
-      const appendChunk = (chunk: string) => {
-        try {
-          const data = JSON.parse(chunk) as ChatResponse;
-          receivedSessionId = data.session_id ?? receivedSessionId;
-          receivedShowCustomerCare =
-            data.show_customer_care ?? receivedShowCustomerCare;
-          receivedText += data.response ?? data.message?.content ?? "";
-        } catch {
-          receivedText += chunk;
-        }
-        setStreamTarget(receivedText);
-      };
+   const appendChunk = (chunk: string) => {
+  try {
+    const data = JSON.parse(chunk) as {
+      type?: string;
+      content?: string;
+      response?: string;
+      session_id?: string;
+      show_customer_care?: boolean;
+    };
+
+    if (data.session_id) {
+      receivedSessionId = data.session_id;
+    }
+
+    if (data.show_customer_care !== undefined) {
+      receivedShowCustomerCare = data.show_customer_care;
+    }
+
+    if (data.type === "chunk") {
+      receivedText += data.content ?? "";
+    } else if (data.type === "done") {
+      // Don't append again because the chunks already
+      // contain the complete streamed response.
+      if (!receivedText && data.content) {
+        receivedText = data.content;
+      }
+    } else if (data.response) {
+      receivedText += data.response;
+    }
+  } catch {
+    receivedText += chunk;
+  }
+
+  setStreamTarget(receivedText);
+};
+
 
       while (true) {
         const { value, done } = await reader.read();
