@@ -7,14 +7,21 @@ const configuredChatbotUrl =
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    // Read the request body without parsing/re-stringifying it.
+    // This keeps the proxy as lightweight as possible.
+    const body = await request.text();
 
     const requestOptions: RequestInit = {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/x-ndjson, text/event-stream, text/plain",
       },
-      body: JSON.stringify(body),
+
+      body,
+
+      // Keep the connection open while Ollama is generating.
       signal: AbortSignal.timeout(125_000),
     };
 
@@ -41,20 +48,52 @@ export async function POST(request: Request) {
       );
     }
 
-    // FastAPI /chat returns normal JSON.
-    const contentType =
-      response.headers.get("content-type") ||
-      "application/json";
+    // Forward upstream errors without trying to parse the stream.
+    if (!response.ok) {
+      return new NextResponse(response.body, {
+        status: response.status,
+        headers: {
+          "Content-Type":
+            response.headers.get("content-type") ||
+            "application/json",
 
-    const responseBody = await response.text();
+          "Cache-Control":
+            "no-cache, no-transform",
 
-    return new NextResponse(responseBody, {
+          "X-Accel-Buffering":
+            "no",
+        },
+      });
+    }
+
+    // IMPORTANT:
+    // Pass the ReadableStream directly to the browser.
+    //
+    // Do NOT:
+    //   await response.json()
+    //   await response.text()
+    //   response.body?.getReader()
+    //
+    // The browser/frontend should consume the stream.
+    return new NextResponse(response.body, {
       status: response.status,
+
       headers: {
-        "Content-Type": contentType,
-        "Cache-Control": "no-cache, no-transform",
+        "Content-Type":
+          response.headers.get("content-type") ||
+          "application/x-ndjson",
+
+        "Cache-Control":
+          "no-cache, no-transform",
+
+        "X-Accel-Buffering":
+          "no",
+
+        "Connection":
+          "keep-alive",
       },
     });
+
   } catch (error) {
     console.error(
       "Chatbot upstream request failed",
