@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
+import ReactMarkdown from "react-markdown";
 
 type Message = {
   from: "bot" | "user";
@@ -299,6 +300,26 @@ export function Chatbot() {
      * The finally block inside sendMessage()
      * will set sending=false.
      */
+  }
+
+  function clearChat() {
+    if (
+      abortControllerRef.current
+    ) {
+      abortControllerRef.current.abort();
+    }
+
+    setInput("");
+    setSessionId(undefined);
+    setShowCustomerCare(false);
+    setMessages([
+      {
+        from: "bot",
+        text: "Hi. I can help you find the right way to begin.",
+      },
+    ]);
+    setSending(false);
+    sendingRef.current = false;
   }
 
   /*
@@ -855,15 +876,26 @@ export function Chatbot() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() =>
-                setOpen(false)
-              }
-              aria-label="Close chat"
-            >
-              <i className="bi bi-x-lg" />
-            </button>
+            <div className="chatbot-header-actions">
+              <button
+                type="button"
+                className="chatbot-clear-button"
+                onClick={clearChat}
+                aria-label="Clear chat"
+              >
+                <i className="bi bi-trash"></i>
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setOpen(false)
+                }
+                aria-label="Close chat"
+              >
+                <i className="bi bi-x-lg" />
+              </button>
+            </div>
           </div>
 
           {/* ============================================ */}
@@ -895,7 +927,13 @@ export function Chatbot() {
                     className={`chat-message chat-message-${message.from}`}
                   >
                     {message.text ? (
-                      message.text
+                      message.from === "bot" ? (
+                        <ReactMarkdown>
+                          {message.text}
+                        </ReactMarkdown>
+                      ) : (
+                        message.text
+                      )
                     ) : (
                       <span
                         className="message-cursor"
