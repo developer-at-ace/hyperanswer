@@ -121,7 +121,7 @@ export function Chatbot() {
         );
 
         gain.gain.exponentialRampToValueAtTime(
-          0.08,
+          0.22,
           audioContext.currentTime + 0.03,
         );
 

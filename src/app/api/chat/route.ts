@@ -1,76 +1,97 @@
-import { NextResponse } from "next/server";
-
 const chatbotUrl =
   process.env.CHATBOT_URL?.trim() ||
-  "http://bot.suamglobalventures.com/chat";
+  "http://suamai-670525487.us-east-1.elb.amazonaws.com/chat";
 
 export async function POST(request: Request) {
   try {
     const body = await request.text();
 
-    const response = await fetch(
-      chatbotUrl,
-      {
-        method: "POST",
+    const upstream = await fetch(chatbotUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/x-ndjson",
+      },
+      body,
+      signal: AbortSignal.timeout(300_000),
+      cache: "no-store",
+    });
 
+    if (!upstream.ok) {
+      const errorText = await upstream.text();
+
+      return new Response(errorText, {
+        status: upstream.status,
         headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/x-ndjson",
+          "Content-Type":
+            upstream.headers.get("content-type") ||
+            "application/json",
+          "Cache-Control": "no-cache, no-transform",
         },
+      });
+    }
 
-        body,
-
-        signal: AbortSignal.timeout(300_000),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-
-      return new NextResponse(
-        errorText,
+    if (!upstream.body) {
+      return new Response(
+        JSON.stringify({
+          detail: "Chatbot returned an empty stream.",
+        }),
         {
-          status: response.status,
+          status: 502,
           headers: {
-            "Content-Type":
-              response.headers.get("content-type") ||
-              "text/plain",
-
-            "Cache-Control":
-              "no-cache, no-transform",
-
-            "X-Accel-Buffering":
-              "no",
+            "Content-Type": "application/json",
           },
         }
       );
     }
 
-    return new NextResponse(
-      response.body,
-      {
-        status: 200,
+    const stream = new ReadableStream({
+      async start(controller) {
+        const reader = upstream.body!.getReader();
 
-        headers: {
-          "Content-Type":
-            "application/x-ndjson",
+        try {
+          while (true) {
+            const { value, done } =
+              await reader.read();
 
-          "Cache-Control":
-            "no-cache, no-transform",
+            if (done) {
+              break;
+            }
 
-          "X-Accel-Buffering":
-            "no",
-        },
-      }
-    );
+            if (value) {
+              controller.enqueue(value);
+            }
+          }
+        } catch (error) {
+          console.error(
+            "Streaming proxy error:",
+            error
+          );
 
+          controller.error(error);
+        } finally {
+          reader.releaseLock();
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/x-ndjson; charset=utf-8",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+      },
+    });
   } catch (error) {
     console.error(
       "Chatbot upstream request failed:",
       error
     );
 
-    return NextResponse.json(
+    return Response.json(
       {
         detail:
           "The chatbot service is unavailable.",
