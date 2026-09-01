@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { BootstrapClient } from "@/components/common/BootstrapClient";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.scss";
@@ -15,15 +16,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18329215326" />
-        <script dangerouslySetInnerHTML={{
-          __html: `
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18329215326"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-18329215326');
-          `,
-        }} />
+          `}
+        </Script>
         <BootstrapClient />{children}
       </body>
     </html>
