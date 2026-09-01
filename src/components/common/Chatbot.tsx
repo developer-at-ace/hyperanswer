@@ -17,16 +17,58 @@ type OpenChatEvent = CustomEvent<{
   message?: string;
 }>;
 
+const assistantNames = [
+  "Lucy",
+  "Mia",
+  "Ava",
+  "Emma",
+  "Sofia",
+  "Nora",
+  "Zoe",
+  "Luna",
+  "Ella",
+  "Harper",
+  "Olivia",
+  "Mila",
+  "Aiden",
+  "Leo",
+  "Noah",
+  "Theo",
+];
+
+function getRandomAssistantName(
+  exclude?: string,
+) {
+  const available = assistantNames.filter(
+    (name) => name !== exclude,
+  );
+
+  const pool =
+    available.length > 0
+      ? available
+      : assistantNames;
+
+  const index = Math.floor(
+    Math.random() * pool.length,
+  );
+
+  return pool[index];
+}
+
 export function Chatbot() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [launcherArriving, setLauncherArriving] =
     useState(true);
   const [greetingVisible, setGreetingVisible] =
-    useState(true);
+    useState(false);
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] =
     useState<string>();
   const [sending, setSending] = useState(false);
+  const [assistantName, setAssistantName] =
+    useState(() =>
+      getRandomAssistantName(),
+    );
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -309,6 +351,9 @@ export function Chatbot() {
       abortControllerRef.current.abort();
     }
 
+    setAssistantName(() =>
+      getRandomAssistantName(),
+    );
     setInput("");
     setSessionId(undefined);
     setShowCustomerCare(false);
@@ -863,14 +908,12 @@ export function Chatbot() {
               </span>
 
               <div>
-                <strong>
-                  Trimmedi assistant
-                </strong>
+                <strong>{assistantName}</strong>
 
                 <span>
                   <b />{" "}
                   {sending
-                    ? "Writing a reply..."
+                    ? `${assistantName} is typing...`
                     : "Online now"}
                 </span>
               </div>
@@ -952,11 +995,13 @@ export function Chatbot() {
             {sending && (
               <div
                 className="chat-typing"
-                aria-label="Assistant is typing"
+                aria-label={`${assistantName} is typing`}
               >
-                <span />
-                <span />
-                <span />
+                <span className="chat-typing-label">
+                  {assistantName} is typing
+                </span>
+
+
               </div>
             )}
 
@@ -1024,7 +1069,7 @@ export function Chatbot() {
                 }
                 placeholder={
                   sending
-                    ? "Assistant is replying..."
+                    ? `${assistantName} is typing...`
                     : "Message Trimmedi..."
                 }
                 disabled={sending}

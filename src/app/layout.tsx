@@ -4,8 +4,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.scss";
 
 export const metadata: Metadata = {
-  title: "Trimmedi | Expert answers, right when it matters",
-  description: "A shared expert Q&A experience for thoughtful, practical guidance.",
+  title: "Trimmedi | Ask a question",
+  description: "A simple place to ask a question and explore helpful starting points.",
   icons: {
     icon: "/assistance.gif",
   },
@@ -14,7 +14,18 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body><BootstrapClient />{children}</body>
+      <body>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18329215326" />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-18329215326');
+          `,
+        }} />
+        <BootstrapClient />{children}
+      </body>
     </html>
   );
 }

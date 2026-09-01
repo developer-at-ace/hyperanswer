@@ -16,8 +16,7 @@ export function Header({ site }: { site: SiteConfig }) {
             <div className="navbar-nav ms-auto align-items-lg-center gap-lg-3">
               <a className="nav-link" href="#categories">Categories</a>
               <a className="nav-link" href="#how-it-works">How it works</a>
-              <a className="nav-link" href="#pricing">Plans</a>
-              <a className="nav-link" href="#trust">Become an expert</a>
+              <a className="nav-link" href="#trust">About</a>
               <a className="nav-link" href="#faq">Help</a>
               <a className="nav-link nav-login" href="#question">Log in</a>
               <a className="btn btn-brand btn-sm px-3" href="#question">Ask a question <i className="bi bi-arrow-up-right ms-1" /></a>

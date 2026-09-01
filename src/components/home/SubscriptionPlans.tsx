@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 const plans = [
-  { name: "Single answer", monthly: 9, description: "For one question that needs a thoughtful next step.", features: ["One expert conversation", "Written guidance", "Private by default"] },
-  { name: "Clarity", monthly: 19, description: "For ongoing questions and a little more room to think.", features: ["Three conversations each month", "Priority matching", "Save your conversation history"], featured: true },
-  { name: "Steady support", monthly: 39, description: "For people who want a reliable place to return to.", features: ["Unlimited follow-up questions", "Faster expert responses", "Monthly account check-in"] },
+  { name: "Starter", monthly: 9, description: "For one question and a few useful starting points.", features: ["One brief question", "Simple overview", "Private by default"] },
+  { name: "Flex", monthly: 19, description: "For a few follow-up ideas and a little more room to think.", features: ["A few question rounds", "Practical direction", "Save your activity"], featured: true },
+  { name: "Routine", monthly: 39, description: "For ongoing ideas and a regular place to come back to.", features: ["More question time", "Easy revisit", "Helpful reminders"] },
 ];
 
 export function SubscriptionPlans() {

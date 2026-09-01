@@ -3,7 +3,6 @@ import { FAQ } from "@/components/home/FAQ";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { HomePage } from "@/components/home/HomePage";
-import { SubscriptionPlans } from "@/components/home/SubscriptionPlans";
 import { Chatbot } from "@/components/common/Chatbot";
 import { getSiteConfig } from "@/config/siteConfig";
 
@@ -17,7 +16,6 @@ export default async function Page() {
       <Header site={site} />
       <main>
         <HomePage site={site} />
-        <SubscriptionPlans />
         <FAQ site={site} />
       </main>
       <Footer site={site} />
