@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { BootstrapClient } from "@/components/common/BootstrapClient";
+import {
+  googleAdsId,
+  googleTagId,
+} from "@/config/analytics";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.scss";
 
@@ -20,9 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Script
-          id="google-ads-tag"
+          id="google-tag"
           strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=AW-18329215326"
+          src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`}
         />
 
         <Script id="gtag-init" strategy="afterInteractive">
@@ -32,7 +36,8 @@ export default function RootLayout({
             window.gtag = gtag;
 
             gtag('js', new Date());
-            gtag('config', 'AW-18329215326', { debug_mode: true });
+            gtag('config', '${googleTagId}', { debug_mode: true });
+            gtag('config', '${googleAdsId}', { debug_mode: true });
           `}
         </Script>
 
