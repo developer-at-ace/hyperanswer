@@ -6,29 +6,39 @@ import "./globals.scss";
 
 export const metadata: Metadata = {
   title: "Trimmedi | Ask a question",
-  description: "A simple place to ask a question and explore helpful starting points.",
+  description:
+    "A simple place to ask a question and explore helpful starting points.",
   icons: {
     icon: "/assistance.gif",
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body>
         <Script
+          id="google-ads-tag"
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=AW-18329215326"
         />
+
         <Script id="gtag-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+
             gtag('js', new Date());
             gtag('config', 'AW-18329215326');
           `}
         </Script>
-        <BootstrapClient />{children}
+
+        <BootstrapClient />
+
+        {children}
       </body>
     </html>
   );
