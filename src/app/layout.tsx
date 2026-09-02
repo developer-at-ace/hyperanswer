@@ -32,7 +32,7 @@ export default function RootLayout({
             window.gtag = gtag;
 
             gtag('js', new Date());
-            gtag('config', 'AW-18329215326');
+            gtag('config', 'AW-18329215326', { debug_mode: true });
           `}
         </Script>
 
