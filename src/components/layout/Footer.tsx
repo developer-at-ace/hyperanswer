@@ -1,12 +1,6 @@
 import type { SiteConfig } from "@/config/siteConfig";
-import { trackGoogleAdsConversion } from "@/lib/googleAds";
 import Link from "next/link";
-import { useEffect } from "react";
-
 export function Footer({ site }: { site: SiteConfig }) {
-    useEffect(() => {
-      trackGoogleAdsConversion()
-    }, []);
   return (
     <footer className="site-footer">
       <div className="container py-5">
