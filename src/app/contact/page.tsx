@@ -59,11 +59,11 @@ export default async function ContactPage() {
                   <span className="section-kicker">Support topics</span>
                   <h2>What can we help with?</h2>
                   <ul>
-                    <>Questions about how the service works</>
-                    <>Account access or subscription questions</>
-                    <>Billing, cancellation, or refund requests</>
-                    <>Privacy, data, or content concerns</>
-                    <>Accessibility feedback or technical issues</>
+                    <li>Questions about how the service works</li>
+                    <li>Account access or subscription questions</li>
+                    <li>Billing, cancellation, or refund requests</li>
+                    <li>Privacy, data, or content concerns</li>
+                    <li>Accessibility feedback or technical issues</li>
                   </ul>
                   <a className="btn btn-brand" href="mailto:support@trimmedi.com?subject=Trimmedi%20support%20request">
                     Email support <i className="bi bi-arrow-up-right ms-1" />

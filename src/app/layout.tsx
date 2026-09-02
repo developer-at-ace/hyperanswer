@@ -22,11 +22,11 @@ export default function RootLayout({
       <body>
         <Script
           id="google-ads-tag"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
           src={`https://www.googletagmanager.com/gtag/js?id=${googleAdsId}`}
         />
 
-        <Script id="gtag-init" strategy="beforeInteractive">
+        <Script id="gtag-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

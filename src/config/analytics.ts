@@ -1,3 +1,4 @@
 export const googleAdsId = "AW-18329215326";
-export const googleAdsConversionLabel =
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL;
+export const googleAdsConversionLabel = "exboCIf7p-AcEN7ChqRE";
+export const googleAdsConversionSendTo =
+  `${googleAdsId}/${googleAdsConversionLabel}`;
