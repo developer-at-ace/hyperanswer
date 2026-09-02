@@ -11,7 +11,7 @@ export function Footer({ site }: { site: SiteConfig }) {
             <p className="footer-copy">Good questions deserve thoughtful context. Start with a few details and explore useful starting points.</p>
           </div>
           <div className="col-6 col-lg-2"><h2>Explore</h2><Link href="/#categories">Categories</Link><Link href="/#how-it-works">How it works</Link><Link href="/#faq">Help center</Link></div>
-          <div className="col-6 col-lg-2"><h2>Company</h2><Link href="/about">About us</Link><Link href="/contact">Contact us</Link><Link href="/#question">Ask a question</Link><Link href="/">Start here</Link></div>
+          <div className="col-6 col-lg-2"><h2>Company</h2><Link href="/about-us">About Us</Link><Link href="/contact-us">Contact Us</Link><Link href="/#question">Ask a question</Link><Link href="/">Start here</Link></div>
           <div className="col-12 col-lg-3">
             <h2>Visit us</h2>
             <p className="footer-address">
