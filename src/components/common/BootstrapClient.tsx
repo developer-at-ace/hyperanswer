@@ -7,6 +7,7 @@ export function BootstrapClient() {
   useEffect(() => {
     void import("bootstrap/dist/js/bootstrap.bundle.min.js");
     window.trackGoogleAdsConversion = trackGoogleAdsConversion;
+    trackGoogleAdsConversion();
   }, []);
   return null;
 }

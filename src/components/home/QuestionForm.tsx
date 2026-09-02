@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { trackGoogleAdsConversion } from "@/lib/googleAds";
 
 export function QuestionForm({ medicalMode }: { medicalMode: boolean }) {
   const [question, setQuestion] = useState("");
@@ -9,6 +10,7 @@ export function QuestionForm({ medicalMode }: { medicalMode: boolean }) {
     event.preventDefault();
     const text = question.trim();
     if (!text) return;
+    trackGoogleAdsConversion();
     window.dispatchEvent(new CustomEvent("trimmedi:open-chat", {
       detail: { message: text },
     }));

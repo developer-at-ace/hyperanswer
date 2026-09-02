@@ -1,7 +1,12 @@
 import type { SiteConfig } from "@/config/siteConfig";
+import { trackGoogleAdsConversion } from "@/lib/googleAds";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export function Header({ site }: { site: SiteConfig }) {
+  useEffect(() => {
+    trackGoogleAdsConversion()
+  }, []);
   return (
     <header className="site-header">
       <nav className="navbar navbar-expand-lg" aria-label="Main navigation">
