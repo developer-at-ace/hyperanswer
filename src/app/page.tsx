@@ -10,13 +10,12 @@ export default async function Page() {
   const headerList = await headers();
   const hostname = headerList.get("host") ?? "";
   const site = getSiteConfig(hostname);
-
   return (
     <div className={`site-shell site-${site.key}`} style={{ "--brand-primary": site.primaryColor, "--brand-secondary": site.secondaryColor, "--brand-accent": site.accentColor } as React.CSSProperties}>
       <Header site={site} />
       <main>
         <HomePage site={site} />
-        <FAQ site={site} />
+        <FAQ />
       </main>
       <Footer site={site} />
       <Chatbot />

@@ -7,7 +7,7 @@ export function Header({ site }: { site: SiteConfig }) {
       <nav className="navbar navbar-expand-lg" aria-label="Main navigation">
         <div className="container">
           <Link className="navbar-brand d-flex align-items-center gap-2" href="/" aria-label={`${site.siteName} home`}>
-            <span className="brand-mark"><i className={site.medicalMode ? "bi bi-plus-lg" : "bi bi-arrow-up-right"} /></span>
+            <span className="brand-mark"><i className="bi bi-arrow-up-right" /></span>
             <span>{site.siteName}</span>
           </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">

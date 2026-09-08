@@ -26,6 +26,5 @@ export function trackGoogleAdsConversion(): boolean {
     send_to: googleAdsConversionSendTo,
   });
   window.__googleAdsConversionTracked = true;
-  
   return true;
 }
